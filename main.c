@@ -593,6 +593,8 @@ static char *find_libpath(void) {
     return "/usr/lib/x86_64-linux-gnu";
   if (file_exists("/usr/lib64/crti.o"))
     return "/usr/lib64";
+  if (file_exists("/usr/lib/crti.o"))
+    return "/usr/lib";
   error("library path is not found");
 }
 
@@ -601,6 +603,7 @@ static char *find_gcc_libpath(void) {
     "/usr/lib/gcc/x86_64-linux-gnu/*/crtbegin.o",
     "/usr/lib/gcc/x86_64-pc-linux-gnu/*/crtbegin.o", // For Gentoo
     "/usr/lib/gcc/x86_64-redhat-linux/*/crtbegin.o", // For Fedora
+    "/usr/lib/gcc/x86_64-alpine-linux-musl/*/crtbegin.o" // For Alpine
   };
 
   for (int i = 0; i < sizeof(paths) / sizeof(*paths); i++) {
@@ -645,7 +648,11 @@ static void run_linker(StringArray *inputs, char *output) {
 
   if (!opt_static) {
     strarray_push(&arr, "-dynamic-linker");
-    strarray_push(&arr, "/lib64/ld-linux-x86-64.so.2");
+    if (file_exists("/lib64/ld-linux-x86-64.so.2")) {
+      strarray_push(&arr, "/lib64/ld-linux-x86-64.so.2"); // ubuntu 20.04
+    } else if (file_exists("/lib/ld-musl-x86_64.so.1")) {
+      strarray_push(&arr, "/lib/ld-musl-x86_64.so.1"); // alpine
+    }
   }
 
   for (int i = 0; i < ld_extra_args.len; i++)

@@ -54,4 +54,10 @@ static void *__va_arg_fp(__va_elem *ap, int sz, int align) {
 #define __GNUC_VA_LIST 1
 typedef va_list __gnuc_va_list;
 
+#ifndef va_list
+// TODO: this is necessary on Alpine linux; there must be a better condition
+// to check than if we have va_list defined at this point.
+typedef va_list __builtin_va_list;
+#endif
+
 #endif

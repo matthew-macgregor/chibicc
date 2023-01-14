@@ -1506,8 +1506,9 @@ static bool is_typename(Token *tok) {
       "_Thread_local", "__thread", "_Atomic",
     };
 
-    for (int i = 0; i < sizeof(kw) / sizeof(*kw); i++)
+    for (int i = 0; i < sizeof(kw) / sizeof(*kw); i++) {
       hashmap_put(&map, kw[i], (void *)1);
+    }
   }
 
   return hashmap_get2(&map, tok->loc, tok->len) || find_typedef(tok);
@@ -3131,13 +3132,16 @@ static Token *parse_typedef(Token *tok, Type *basety) {
   bool first = true;
 
   while (!consume(&tok, tok, ";")) {
-    if (!first)
+    if (!first) {
       tok = skip(tok, ",");
+    }
     first = false;
 
     Type *ty = declarator(&tok, tok, basety);
-    if (!ty->name)
+    if (!ty->name) {
       error_tok(ty->name_pos, "typedef name omitted");
+    }
+
     push_scope(get_ident(ty->name))->type_def = ty;
   }
   return tok;

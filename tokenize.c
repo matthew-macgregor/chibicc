@@ -75,6 +75,13 @@ void warn_tok(Token *tok, char *fmt, ...) {
   va_end(ap);
 }
 
+void print_tok(Token *tok, char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  verror_at(tok->file->name, tok->file->contents, tok->line_no, tok->loc, fmt, ap);
+  va_end(ap);
+}
+
 // Consumes the current token if it matches `op`.
 bool equal(Token *tok, char *op) {
   return memcmp(tok->loc, op, tok->len) == 0 && op[tok->len] == '\0';
@@ -82,8 +89,13 @@ bool equal(Token *tok, char *op) {
 
 // Ensure that the current token is `op`.
 Token *skip(Token *tok, char *op) {
-  if (!equal(tok, op))
+  if (!equal(tok, op)) {
+    char tmp[256] = {0};
+    memcpy(tmp, tok->loc, tok->len);
+    printf("tok: %s, op: %s\n", tmp, op);
     error_tok(tok, "expected '%s'", op);
+  }
+
   return tok->next;
 }
 

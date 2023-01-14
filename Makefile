@@ -13,8 +13,10 @@ chibicc: $(OBJS)
 
 $(OBJS): chibicc.h
 
+# Note: -include include/stdarg.h resolves missing va_list with musl, but
+# is not needed for platforms with glibc
 test/%.exe: chibicc test/%.c
-	./chibicc -Iinclude -Itest -c -o test/$*.o test/$*.c
+	./chibicc -include include/stdarg.h -Iinclude -Itest -c -o test/$*.o test/$*.c
 	$(CC) -pthread -o $@ test/$*.o -xc test/common
 
 test: $(TESTS)

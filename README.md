@@ -1,5 +1,12 @@
 # chibicc: A Small C Compiler
 
+### Compilers
+
+- gcc version 11.3.0 (Ubuntu 11.3.0-1ubuntu1~22.04) **ok**
+
+
+# Original README Below
+
 (The old master has moved to
 [historical/old](https://github.com/rui314/chibicc/tree/historical/old)
 branch. This is a new one uploaded in September 2020.)
